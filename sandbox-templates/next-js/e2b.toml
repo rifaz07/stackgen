@@ -1,0 +1,17 @@
+# This is a config for E2B sandbox template.
+# You can use template ID (smwzcqbwr05s86rpue0o) or template name (stackgen-nextjs-build) to create a sandbox:
+
+# Python SDK
+# from e2b import Sandbox, AsyncSandbox
+# sandbox = Sandbox.create("stackgen-nextjs-build") # Sync sandbox
+# sandbox = await AsyncSandbox.create("stackgen-nextjs-build") # Async sandbox
+
+# JS SDK
+# import { Sandbox } from 'e2b'
+# const sandbox = await Sandbox.create('stackgen-nextjs-build')
+
+team_id = "42e3f947-5aae-45b6-9a0e-1f6748acb9ae"
+start_cmd = "/compile_page.sh"
+dockerfile = "e2b.Dockerfile"
+template_name = "stackgen-nextjs-build"
+template_id = "smwzcqbwr05s86rpue0o"
