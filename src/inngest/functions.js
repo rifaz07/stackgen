@@ -9,6 +9,8 @@ import Sandbox from "@e2b/code-interpreter";
 import z from "zod";
 import { PROMPT } from "@/prompt";
 import { lastAssistantTextMessageContent } from "./utils";
+import db from "@/lib/db";
+import { MessageRole, MessageType } from "@prisma/client";
 
 export const codeAgentFunction = inngest.createFunction(
   {
@@ -20,7 +22,7 @@ export const codeAgentFunction = inngest.createFunction(
       const sandbox = await Sandbox.create(
         "rifazshaikh789/stackgen-nextjs-build",
         {
-          timeoutMs: 1000 * 60 * 10, // 10 minutes
+          timeoutMs: 1000 * 60 * 10,
         },
       );
       return sandbox.sandboxId;
@@ -30,10 +32,10 @@ export const codeAgentFunction = inngest.createFunction(
       name: "code-agent",
       description: "An expert coding agent",
       system: PROMPT,
-     model: gemini({ 
-  model: "gemini-2.5-flash",
-  apiKey: process.env.GEMINI_API_KEY 
-}),
+      model: gemini({
+        model: "gemini-2.5-flash",
+        apiKey: process.env.GEMINI_API_KEY,
+      }),
       tools: [
         createTool({
           name: "terminal",
@@ -153,12 +155,45 @@ export const codeAgentFunction = inngest.createFunction(
 
     const result = await network.run(event.data.value);
 
+    const isError =
+      !result.state.data.summary ||
+      Object.keys(result.state.data.files || {}).length === 0;
+
     const sandboxUrl = await step.run("get-sandbox-url", async () => {
       const sandbox = await Sandbox.connect(sandboxId, {
         timeoutMs: 1000 * 60 * 10,
       });
       const host = sandbox.getHost(3000);
       return `http://${host}`;
+    });
+
+    await step.run("save-result", async () => {
+      if (isError) {
+        return await db.message.create({
+          data: {
+            projectId: event.data.projectId,
+            content: "Something went wrong. Please try again",
+            role: MessageRole.ASSISTANT,
+            type: MessageType.ERROR,
+          },
+        });
+      }
+
+      return await db.message.create({
+        data: {
+          projectId: event.data.projectId,
+          content: result.state.data.summary,
+          role: MessageRole.ASSISTANT,
+          type: MessageType.RESULT,
+          fragments: {
+            create: {
+              sandboxUrl: sandboxUrl,
+              title: "Untitled",
+              files: result.state.data.files,
+            },
+          },
+        },
+      });
     });
 
     return {

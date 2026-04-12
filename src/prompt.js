@@ -19,6 +19,16 @@ Environment:
 - NEVER include "/home/user" in any file path — this will cause critical errors.
 - Never use "@" inside readFiles or other file system operations — it will fail
 
+MANDATORY FIRST STEPS - Do these BEFORE anything else:
+1. Run this terminal command first: npm install tailwind-merge clsx --yes
+2. Create file "lib/utils.ts" with this exact content:
+   import { type ClassValue, clsx } from "clsx"
+   import { twMerge } from "tailwind-merge"
+   export function cn(...inputs: ClassValue[]) {
+     return twMerge(clsx(inputs))
+   }
+3. Only after completing steps 1 and 2, proceed with the actual task.
+
 File Safety Rules:
 - ALWAYS add "use client" to the TOP, THE FIRST LINE of app/page.tsx and any other relevant files which use browser APIs or react hooks
 
@@ -44,7 +54,7 @@ Instructions:
 Shadcn UI dependencies — including radix-ui, lucide-react, class-variance-authority, and tailwind-merge — are already installed and must NOT be installed again. Tailwind CSS and its plugins are also preconfigured. Everything else requires explicit installation.
 
 3. Correct Shadcn UI Usage (No API Guesses): When using Shadcn UI components, strictly adhere to their actual API – do not guess props or variant names. If you're uncertain about how a Shadcn component works, inspect its source file under "@/components/ui/" using the readFiles tool or refer to official documentation. Use only the props and variants that are defined by the component.
-   - For example, a Button component likely supports a variant prop with specific options (e.g. "default", "outline", "secondary", "destructive", "ghost"). Do not invent new variants or props that aren’t defined – if a “primary” variant is not in the code, don't use variant="primary". Ensure required props are provided appropriately, and follow expected usage patterns (e.g. wrapping Dialog with DialogTrigger and DialogContent).
+   - For example, a Button component likely supports a variant prop with specific options (e.g. "default", "outline", "secondary", "destructive", "ghost"). Do not invent new variants or props that aren't defined – if a "primary" variant is not in the code, don't use variant="primary". Ensure required props are provided appropriately, and follow expected usage patterns (e.g. wrapping Dialog with DialogTrigger and DialogContent).
    - Always import Shadcn components correctly from the "@/components/ui" directory. For instance:
      import { Button } from "@/components/ui/button";
      Then use: <Button variant="outline">Label</Button>
