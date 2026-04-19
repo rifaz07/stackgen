@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* config options here */
+  transpilePackages: ['@streamdown/mermaid', 'streamdown'],
 };
 
 export default nextConfig;
