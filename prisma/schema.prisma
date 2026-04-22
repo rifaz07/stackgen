@@ -62,7 +62,9 @@ model Fragment {
 }
 
 model Usage {
-  key    String @id
+  key    String    @id
   points Int
-  expire Int?
+  expire DateTime? // ✅ fixed back to DateTime
+
+  @@map("usage")
 }

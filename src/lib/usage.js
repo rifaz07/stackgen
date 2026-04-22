@@ -14,7 +14,7 @@ export async function getUsageTracker() {
 
   const usageTracker = new RateLimiterPrisma({
     storeClient: db,
-    tableName: "Usage",
+    tableName: "usage", //fixed
     points: hasProAccess ? PRO_POINTS : FREE_POINTS,
     duration: DURATION,
   });
@@ -53,7 +53,6 @@ export async function getUsageStatus() {
 
     return result;
   } catch (error) {
-    // Handle case where user has no record yet
     console.error("Error getting usage:", error);
     return null;
   }

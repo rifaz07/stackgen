@@ -15,8 +15,11 @@ export const createProject = async (value) => {
   try {
     await consumeCredits();
   } catch (error) {
+    console.error("consumeCredits full error:", JSON.stringify(error, null, 2)); // ✅
+    console.error("consumeCredits error message:", error?.message); // ✅
+    console.error("consumeCredits error name:", error?.name); // ✅
     if (error instanceof Error) {
-      throw new Error("Something went wrong"); 
+      throw new Error("Something went wrong");
     } else {
       throw new Error("Too many requests");
     }
